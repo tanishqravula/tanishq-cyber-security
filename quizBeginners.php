@@ -1,26 +1,26 @@
 <?php
 session_start();
-@$_SESSION['cat']=10;
-if(isset($_SESSION['user_auth']) and $_SESSION['user_auth'] == "yes") {
-	
+// $_SESSION['user_auth']
+// if(isset($_SESSION['user_auth'])) {
+   if(true){
     include("cxn.php");
     include("helper.php");
     $cxn = mysqli_connect($host, $user, $pword, $dbname) or die ("error try after some time");
 
-    $user_id = $_SESSION['user_id'];
+    // $user_id = $_SESSION['user_id'];
+    $user_id=7;
 
     $level = getLevel($user_id, $cxn);
 
-        $sql = "SELECT question_id FROM user_quiz_response WHERE user_id = $user_id AND level = 1 ORDER BY question_id DESC";
+        $sql = "SELECT question_id FROM user_quiz_response WHERE user_id = $user_id ORDER BY question_id DESC";
         //echo $sql;
         $result = mysqli_query($cxn, $sql) or die("cant connect to database");
         $row = mysqli_fetch_assoc($result);
         $n = mysqli_num_rows($result);
-		$row['question_id'];
 
-    if($level > 0){
+    if($level == 1){
 
-        //echo "no of rows ".$n."  ".$number_of_question_level_1;
+        echo "no of rows ".$n."  ".$number_of_question_level_1;
 
         if($n >= 1 and $n < $number_of_question_level_1){
 
@@ -33,81 +33,37 @@ if(isset($_SESSION['user_auth']) and $_SESSION['user_auth'] == "yes") {
             //echo "yobaby";
         }elseif($n == $number_of_question_level_1){
             // Here we go to next level  (30 == 30)
-            echo "last";
-            
-		   echo $sel="select quiz.question_id from quiz,user_quiz_response where quiz.correct_option=user_response and user_id=".$user_id." and level=1 and quiz.question_id=user_quiz_response.question_id";         
-           $exe=mysqli_query($cxn,$sel);
-           $fetch=mysqli_num_rows($exe);
-           
-           if(mysqli_num_rows(mysqli_query($cxn,"select * from user_quiz_beginner_status where user_id='".$user_id."'"))){
-                echo $sel="update user_quiz_beginner_status set correct_answer_no=".$fetch." where user_id='".$user_id."' ";
-		   mysqli_query($cxn,$sel);}
-
-           
-          else{  
-                echo $sel="insert into user_quiz_beginner_status values(".$user_id.",".$fetch.")";         
-                mysqli_query($cxn,$sel);   
-               }
-
-               $sql="delete from user_quiz_response where user_id = $user_id and level = 1";
-		   	   mysqli_query($cxn,$sql);
-          
-          if($level==1){
-              $new_level = $level + 1;
-              upgradeLevel($user_id, $new_level, $cxn);
-            }
-
-             header("Location: ../quizSelection.php");
+            $new_level = $level + 1;
+            upgradeLevel($user_id, $new_level, $cxn);
+            header("Location: selectLevelQuiz.php");
 
         }else{
             // fetch first question from quiz
             $current_question_number = 1;
-            $single_question_row = getSingleQuestionRow($current_question_number, $cxn);
-            extract($single_question_row);
-            //echo "yo";
-        }
-    }elseif($level > 1){
-		// delete where user_id = $user_id and level = 1
-
-
-        if($n >= 1 and $n < $number_of_question_level_1){
-
-            extract($row);
-            $current_question_number = $question_id + 1;
-
-            $single_question_row = getSingleQuestionRow($current_question_number, $cxn);
-            extract($single_question_row);
-
-            //echo "yobaby";
-        }elseif($n == $number_of_question_level_1){
-			
-		}
-		else{
-            // fetch first question from quiz
-            $current_question_number = 1;
 
             $single_question_row = getSingleQuestionRow($current_question_number, $cxn);
             extract($single_question_row);
             //echo "yo";
         }
-	
+    }elseif($level == 2){
+        echo "do you want to play level 1 again";
+        die();
+    }else{
+        header("Location: selectLevelQuiz.php");
     }
-	else{
-    
-    }
-    
+    //echo $level;
 
 
     /*  Get all random questions
+
     $all_question_id = getAllRandomQuestionId(30,$level,$cxn);
     print_r($all_question_id);
     echo $all_question_id[0]['question_id'];
     */
 
-
-}else{
+}
+else{
     echo "Login required !";
-	die();
 }
 ?>
 <!DOCTYPE HTML>
@@ -224,11 +180,7 @@ function postStuff(){
 </head>
 <body style="color:#009688">
   <div class="row">
-    <h1 align="center">Beginner Level</h1>
-	<?php 
-			
-	
-	?>
+    <h1 align="center">Cyber Security</h1>
   </div>
   <div class="col-sm-1 col-md-3 ">
   </div>
@@ -238,23 +190,20 @@ function postStuff(){
         <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo round(($current_question_number - 1)/$number_of_question_level_1*100)."%"; ?>" aria-valuemin="0" aria-valuemax="<?php echo $number_of_question_level_1 ?>" style="width: <?php echo round(($current_question_number - 1)/$number_of_question_level_1*100)."%"; ?>;">
             <span class="sr-only"><?php echo round(($current_question_number - 1)/$number_of_question_level_1*100)."%"; ?> Completed</span>
       </div>
-      <div class="progress-bar" role="progressbar" aria-valuenow="<?php echo round(($current_question_number - 1)/$number_of_question_level_1*100)."%"; ?>" aria-valuemin="0" aria-valuemax="<?php echo $number_of_question_level_1 ?>" style="width: <?php echo round(($current_question_number - 1)/$number_of_question_level_1*100)."%"; ?>;">
-            <span class="sr-only"><?php echo round(($current_question_number - 1)/$number_of_question_level_1*100)."%"; ?> Completed</span>
-      </div>
     </div>
   <div class="panel panel-primary">
      <div class="panel-heading">
-       <h3 class="panel-title" style="text-align:justify;">
+       <h3 class="panel-title">
           <?php echo $question_name ?>
          </h3>
      </div>
       <?php
       if(!empty($image_path)){
-			
+
       ?>
       <div class="panel-body">
           <div class="image">
-              <img src="<?php echo $image_path ?>" style="width:100%;"/>
+              <img src="<?php $image_path ?>" style="width:100%;"/>
           </div>
           <?php
           }
@@ -316,12 +265,12 @@ function postStuff(){
       <div class="modal-content">
         <div class="modal-header">
           <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
-          <h4 class="modal-title"> <p id = "correct_option"></p></h4>
+          <h4 class="modal-title">Answer is correct or wrong </h4>
         </div>
-
-        <div class="modal-body" style="padding-top:0px;margin-top:0px;">
+        <hr>
+        <div class="modal-body">
           <!-- By php place answer and reason -->
-          <h3>Explanation</h3>
+          <p id = "correct_option"></p>
           <p id="complete_answer"></p>
         </div>
 

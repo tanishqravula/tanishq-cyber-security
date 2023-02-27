@@ -1,9 +1,6 @@
 <?php
 session_start();
 
-// echo $_SESSION['current_question_count'];
-// echo "id = ".$_SESSION['user_id'];
-
 if(isset($_SESSION['user_auth']) AND isset($_SESSION['time_left'])) {
     include("cxn.php");
     include("helper.php");
@@ -97,8 +94,10 @@ $(document).ready(function(){
 setTimeout(function() {
     location.reload();
 }, <?php
-    echo 5*60*1000;
-    
+       echo 5*60*1000;
+    //echo intval($_SESSION['duration'])*60*1000;
+ 
+ 
     ?>);
 
 // Timer Countdown
@@ -184,7 +183,7 @@ document.getElementById("tell").innerHTML = "";
 </head>
 <body style="color:#009688">
   <div class="row">
-    <h1 align="center">Intermediate Quiz</h1>
+    <h1 align="center">Cyber Security</h1>
       <p id="tell"><p>
   </div>
 
@@ -220,7 +219,7 @@ document.getElementById("tell").innerHTML = "";
          ?>
 
 
-         <label>
+ <label>
            <input type="radio" name="optionsRadios" <?php if($radio1==1){echo "checked";}?> id="optionsRadios1" value="1" > <?php echo $option1 ?>
          </label>
        </div>
@@ -246,7 +245,7 @@ document.getElementById("tell").innerHTML = "";
 
        <button type="button" name="go" class="btn btn-raised btn-primary" value="prev" onclick="postStuff('6')">Prev</button>
        <button type="button" name="go" class="btn btn-raised btn-primary" value="next" onclick="postStuff('7')">Next</button>
-       <a href="scorepage.php" class="btn btn-raised btn-primary pull-right" onclick="confirm('Do you really want to submit quiz?')">Submit Quiz</a>
+       <a href="scorepage1.php" class="btn btn-raised btn-primary pull-right" onclick="confirm('Do you really want to submit quiz?')">Submit Quiz</a>
 
      </div>
    </div>
